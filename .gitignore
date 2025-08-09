@@ -1,0 +1,46 @@
+# Symfony
+/var/
+/vendor/
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+
+# PhpStorm / IntelliJ
+/.idea/
+
+# VS Code
+/.vscode/
+
+# MacOS
+.DS_Store
+
+# Logs
+/var/log/
+*.log
+
+# Cache
+/var/cache/
+
+# Database
+*.sqlite
+*.db
+
+# Environment files
+/.env.local
+/.env.local.php
+/.env.*.local
+
+# Composer
+/vendor/
+
+# Node modules (if any)
+/node_modules/
+
+# Backup files
+*.bak
+*.backup
+*~

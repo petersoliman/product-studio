@@ -1,0 +1,70 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+# Homepage route
+homepage:
+    path: /
+    controller: App\Controller\ProductIntelligenceController::homepage
+    methods: [GET]
+
+# Manual route definitions for troubleshooting
+api_health:
+    path: /api/health
+    controller: App\Controller\ProductIntelligenceController::healthCheck
+    methods: [GET]
+
+api_schema:
+    path: /api/schema
+    controller: App\Controller\ProductIntelligenceController::getApiSchema
+    methods: [GET]
+
+api_process_intelligence:
+    path: /api/products/intelligence
+    controller: App\Controller\ProductIntelligenceController::processIntelligence
+    methods: [POST]
+
+api_get_product:
+    path: /api/products/{id}
+    controller: App\Controller\ProductIntelligenceController::getProduct
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_get_status:
+    path: /api/products/{id}/status
+    controller: App\Controller\ProductIntelligenceController::getProcessingStatus
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_get_seo:
+    path: /api/products/{id}/seo
+    controller: App\Controller\ProductIntelligenceController::getSeoData
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_list_products:
+    path: /api/products
+    controller: App\Controller\ProductIntelligenceController::listProducts
+    methods: [GET]
+
+api_delete_product:
+    path: /api/products/{id}
+    controller: App\Controller\ProductIntelligenceController::deleteProduct
+    methods: [DELETE]
+    requirements:
+        id: '\d+'
+
+admin_analytics:
+    path: /api/admin/analytics
+    controller: App\Controller\AdminController::getAnalytics
+    methods: [GET]
+
+admin_health:
+    path: /api/admin/health
+    controller: App\Controller\AdminController::detailedHealthCheck
+    methods: [GET]

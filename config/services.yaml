@@ -1,0 +1,97 @@
+# Product Studio Intelligence API - Service Configuration
+# This file configures dependency injection and service parameters
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    # API Configuration
+    app.api.rate_limit.requests_per_minute: '%env(int:RATE_LIMIT_REQUESTS_PER_MINUTE)%'
+    app.api.rate_limit.requests_per_hour: '%env(int:RATE_LIMIT_REQUESTS_PER_HOUR)%'
+    app.api.rate_limit.enabled: '%env(bool:API_RATE_LIMIT_ENABLED)%'
+    
+    # Processing Configuration
+    app.processing.max_concurrent: '%env(int:MAX_CONCURRENT_PROCESSES)%'
+    app.processing.timeout: '%env(int:PROCESSING_TIMEOUT)%'
+    
+    # External API Keys (optional - will use mock data if not provided)
+    app.external_apis.unsplash_key: '%env(default::UNSPLASH_ACCESS_KEY)%'
+    app.external_apis.google_shopping_key: '%env(default::GOOGLE_SHOPPING_API_KEY)%'
+    app.external_apis.amazon_key: '%env(default::AMAZON_API_KEY)%'
+    app.external_apis.openai_key: '%env(default::OPENAI_API_KEY)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            # Bind configuration parameters to service arguments
+            $rateLimit: '%app.api.rate_limit.requests_per_minute%'
+            $maxConcurrentProcesses: '%app.processing.max_concurrent%'
+            $processingTimeout: '%app.processing.timeout%'
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Core Service Configurations
+    App\Service\ProductIntelligenceService:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $seoGenerator: '@App\Service\AI\SeoContentGeneratorService'
+            $scraper: '@App\Service\Scraper\ManufacturerScraperService'
+            $keywordResearch: '@App\Service\SEO\KeywordResearchService'
+            $imageDiscovery: '@App\Service\Media\ImageDiscoveryService'
+            $logger: '@logger'
+
+    App\Service\AI\SeoContentGeneratorService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    App\Service\Scraper\ManufacturerScraperService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    App\Service\SEO\KeywordResearchService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    App\Service\Media\ImageDiscoveryService:
+        arguments:
+            $httpClient: '@http_client'
+            $logger: '@logger'
+
+    # HTTP Client Configuration
+    http_client:
+        class: Symfony\Component\HttpClient\HttpClient
+        factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
+        arguments:
+            - 
+                timeout: 30
+                max_redirects: 3
+                headers:
+                    'User-Agent': 'ProductStudio/1.0 (+https://productstudio.com)'
+
+    # Controller configurations
+    App\Controller\ProductIntelligenceController:
+        arguments:
+            $productIntelligenceService: '@App\Service\ProductIntelligenceService'
+            $entityManager: '@doctrine.orm.entity_manager'
+            $validator: '@validator'
+            $logger: '@logger'
+        tags: ['controller.service_arguments']
+
+    App\Controller\AdminController:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $productIntelligenceService: '@App\Service\ProductIntelligenceService'
+            $logger: '@logger'
+        tags: ['controller.service_arguments']
