@@ -344,27 +344,13 @@ class ProductIntelligenceController extends AbstractController
     }
 
     /**
-     * Homepage - API Information
+     * Homepage - Beautiful Landing Page
      * 
      * @Route("/", name="homepage", methods=["GET"])
      */
-    public function homepage(): JsonResponse
+    public function homepage(): Response
     {
-        return new JsonResponse([
-            'message' => '🚀 Product Studio Intelligence API',
-            'version' => '1.0.0',
-            'description' => 'AI-powered product data enrichment and SEO optimization',
-            'status' => 'online',
-            'endpoints' => [
-                'health_check' => '/api/health',
-                'api_schema' => '/api/schema',
-                'process_product' => 'POST /api/products/intelligence',
-                'list_products' => 'GET /api/products',
-                'admin_analytics' => '/api/admin/analytics'
-            ],
-            'documentation' => 'See /api/schema for complete API documentation',
-            'quick_test' => 'curl http://localhost:8000/api/health'
-        ]);
+        return $this->render('landing.html.twig');
     }
 
     /**
